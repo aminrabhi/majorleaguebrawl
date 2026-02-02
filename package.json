@@ -1,0 +1,15 @@
+{
+  "name": "major-league-brawl",
+  "version": "1.0.0",
+  "description": "Leaderboard site for Major League Brawl",
+  "main": "index.js",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "author": "lilmarco",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^3.4.0"
+  },
+  "type": "module"
+}

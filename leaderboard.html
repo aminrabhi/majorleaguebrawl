@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Major League Brawl Leaderboard</title>
+</head>
+<body>
+  <h1>Major League Brawl Leaderboard</h1>
+
+  <div>
+    <h3>Add Player</h3>
+    <input id="tag" placeholder="Player Tag (e.g., #PLAYER)" />
+    <input id="brawler" placeholder="Brawler Name (e.g., Shelly)" />
+    <button onclick="addPlayer()">Fetch & Add</button>
+  </div>
+
+  <h3>Leaderboard</h3>
+  <button onclick="refreshLeaderboard()">Refresh All</button>
+  <ul id="leaderboard"></ul>
+
+  <script>
+    async function addPlayer() {
+      const tag = document.getElementById('tag').value;
+      const brawler = document.getElementById('brawler').value;
+      const res = await fetch('/api/fetch-trophies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tag, brawler })
+      });
+      const data = await res.json();
+      if (data.error) alert(data.error);
+      else refreshLeaderboard();
+    }
+
+    async function refreshLeaderboard() {
+      // Call serverless function again for each player
+      const leaderboardRes = await fetch('/api/get-leaderboard');
+      const leaderboard = await leaderboardRes.json();
+
+      const ul = document.getElementById('leaderboard');
+      ul.innerHTML = '';
+      leaderboard.sort((a,b)=>b.trophies - a.trophies);
+      leaderboard.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = `${p.name} (${p.brawler}) — ${p.trophies} trophies`;
+        ul.appendChild(li);
+      });
+    }
+
+    // Initial load
+    refreshLeaderboard();
+  </script>
+</body>
+</html>
