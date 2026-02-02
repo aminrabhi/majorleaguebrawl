@@ -9,7 +9,7 @@
   "author": "lilmarco",
   "license": "MIT",
   "dependencies": {
-    "node-fetch": "^3.4.0"
+    "node-fetch": "^2.6.9"
   },
   "type": "module"
 }
