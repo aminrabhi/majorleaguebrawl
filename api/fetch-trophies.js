@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 // Replace with your Brawl Stars API key
 const API_KEY = process.env.BRAWLSTARS_KEY;  
 
