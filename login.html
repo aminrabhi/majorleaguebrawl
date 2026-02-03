@@ -2,21 +2,116 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login – Major League Brawl</title>
+  <title>Major League Brawl — Login / Verify</title>
 </head>
 <body>
+  <h1>Sign Up / Verify Account</h1>
 
-<h1>Sign Up / Verify</h1>
+  <div>
+    <input id="tag" placeholder="Player Tag (no #)" />
+    <br><br>
+    <input id="brawler" placeholder="Brawler Name (e.g. SHELLY)" />
+    <br><br>
+    <button onclick="fetchPlayer()">Fetch Player</button>
+  </div>
 
-<input id="tag" placeholder="Player Tag (no #)">
-<br><br>
-<input id="brawler" placeholder="Brawler (e.g. SHELLY)">
-<br><br>
+  <div id="status" style="margin-top:20px;"></div>
 
-<button onclick="addPlayer()">Check Player</button>
+  <script>
+    let requiredIcon = null; // icon user must set for verification
 
-<p id="status"></p>
+    // Step 3 — Fetch player info
+    async function fetchPlayer() {
+      const tag = document.getElementById('tag').value.replace('#','').trim();
+      const brawler = document.getElementById('brawler').value.trim().toUpperCase();
+      const status = document.getElementById('status');
 
-<script src="login.js"></script>
+      if (!tag || !brawler) {
+        status.textContent = "Please enter both tag and brawler.";
+        return;
+      }
+
+      status.textContent = "Fetching player...";
+
+      try {
+        const res = await fetch('/api/fetch-trophies', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tag, brawler })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          status.textContent = data.error;
+          return;
+        }
+
+        // Show player info & verification button
+        status.innerHTML = `
+          <strong>${data.name}</strong><br>
+          ${data.brawler}: ${data.trophies} trophies<br>
+          <img src="https://cdn.brawlstats.com/player-icons/${data.iconId}.png" width="48">
+          <br><br>
+          <button onclick="startVerification()">Verify Account</button>
+        `;
+
+      } catch (err) {
+        console.error(err);
+        status.textContent = "Failed to fetch player. Try again.";
+      }
+    }
+
+    // Step 4 — Start verification
+    async function startVerification() {
+      try {
+        const res = await fetch('/api/start-verification');
+        const data = await res.json();
+
+        requiredIcon = data.requiredIcon;
+
+        document.getElementById('status').innerHTML = `
+          Change your Brawl Stars profile icon to this:<br><br>
+          <img src="https://cdn.brawlstats.com/player-icons/${requiredIcon}.png" width="64">
+          <br><br>
+          <button onclick="verify()">I changed it</button>
+        `;
+      } catch (err) {
+        console.error(err);
+        document.getElementById('status').textContent = "Failed to start verification.";
+      }
+    }
+
+    // Step 4 — Verify icon
+    async function verify() {
+      const tag = document.getElementById('tag').value.replace('#','').trim();
+
+      if (!requiredIcon) {
+        alert("Start verification first.");
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tag, requiredIcon })
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert("✅ Account verified!");
+          window.location.href = '/leaderboards.html'; // redirect after success
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert("Failed to verify account. Try again.");
+      }
+    }
+  </script>
 </body>
 </html>
