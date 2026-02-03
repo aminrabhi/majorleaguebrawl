@@ -5,58 +5,41 @@
   <title>Major League Brawl Leaderboard</title>
 </head>
 <body>
-  <h1>Major League Brawl Leaderboard</h1>
+<h1>Major League Brawl Leaderboards</h1>
 
-  <div>
-    <h3>Add Player</h3>
-    <input id="tag" placeholder="Player Tag (e.g., #PLAYER)" />
-    <input id="brawler" placeholder="Brawler Name (e.g., Shelly)" />
-    <button onclick="addPlayer()">Fetch & Add</button>
-  </div>
+<button onclick="updateLeaderboards()">Update Leaderboards</button>
 
-  <h3>Leaderboard</h3>
-  <button onclick="refreshLeaderboard()">Refresh All</button>
-  <ul id="leaderboard"></ul>
+<h2>Major League (Legendary → Pro)</h2>
+<ul id="majorLeaderboard"></ul>
+
+<h2>Minor League (Bronze → Mythic)</h2>
+<ul id="minorLeaderboard"></ul>
 
 <script>
-  // This function runs when you click "Fetch & Add"
-  async function addPlayer() {
-    const tag = document.getElementById('tag').value;
-    const brawler = document.getElementById('brawler').value;
-    const res = await fetch('/api/fetch-trophies', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tag, brawler })
-    });
-    const data = await res.json();
-    if (data.error) {
-      alert(data.error);
-    } else {
-      // Add the player to the leaderboard list immediately
-      const ul = document.getElementById('leaderboard');
-      const li = document.createElement('li');
-      li.textContent = `${data.name} (${data.brawler}) — ${data.trophies} trophies`;
-      ul.appendChild(li);
-    }
-  }
+async function updateLeaderboards() {
+  const res = await fetch('/api/update-leaderboards', { method: 'POST' });
+  const data = await res.json();
 
-  // Refresh leaderboard (optional, for now it just lists current items)
-  async function refreshLeaderboard() {
-    const res = await fetch('/api/get-leaderboard');
-    const leaderboard = await res.json();
+  const majorUl = document.getElementById('majorLeaderboard');
+  majorUl.innerHTML = '';
+  data.majorLeaderboard.forEach(p => {
+    const li = document.createElement('li');
+    li.textContent = `${p.name} (${p.brawler}) — ${p.trophies} trophies`;
+    majorUl.appendChild(li);
+  });
 
-    const ul = document.getElementById('leaderboard');
-    ul.innerHTML = '';
-    leaderboard.sort((a,b) => b.trophies - a.trophies);
-    leaderboard.forEach(p => {
-      const li = document.createElement('li');
-      li.textContent = `${p.name} (${p.brawler}) — ${p.trophies} trophies`;
-      ul.appendChild(li);
-    });
-  }
+  const minorUl = document.getElementById('minorLeaderboard');
+  minorUl.innerHTML = '';
+  data.minorLeaderboard.forEach(p => {
+    const li = document.createElement('li');
+    li.textContent = `${p.name} (${p.brawler}) — ${p.trophies} trophies`;
+    minorUl.appendChild(li);
+  });
+}
 
-  // Optional: initial load
-  refreshLeaderboard();
+// Auto-update on page load
+updateLeaderboards();
 </script>
+
 </body>
 </html>
