@@ -18,9 +18,10 @@
   <div id="status" style="margin-top:20px;"></div>
 
   <script>
-    let requiredIcon = null; // icon user must set for verification
+    let sessionId = null;   // for verification session
+    let requiredIcon = null; // icon the user must set
 
-    // Step 3 — Fetch player info
+    // 1️⃣ Fetch player info
     async function fetchPlayer() {
       const tag = document.getElementById('tag').value.replace('#','').trim();
       const brawler = document.getElementById('brawler').value.trim().toUpperCase();
@@ -47,13 +48,13 @@
           return;
         }
 
-        // Show player info & verification button
+        // Show player info and verification button
         status.innerHTML = `
           <strong>${data.name}</strong><br>
           ${data.brawler}: ${data.trophies} trophies<br>
           <img src="https://cdn.brawlstats.com/player-icons/${data.iconId}.png" width="48">
           <br><br>
-          <button onclick="startVerification()">Verify Account</button>
+          <button onclick="startVerification()">Start Verification</button>
         `;
 
       } catch (err) {
@@ -62,15 +63,18 @@
       }
     }
 
-    // Step 4 — Start verification
+    // 2️⃣ Start verification (get random icon)
     async function startVerification() {
+      const status = document.getElementById('status');
+
       try {
         const res = await fetch('/api/start-verification');
         const data = await res.json();
 
         requiredIcon = data.requiredIcon;
+        sessionId = data.sessionId;
 
-        document.getElementById('status').innerHTML = `
+        status.innerHTML = `
           Change your Brawl Stars profile icon to this:<br><br>
           <img src="https://cdn.brawlstats.com/player-icons/${requiredIcon}.png" width="64">
           <br><br>
@@ -78,15 +82,16 @@
         `;
       } catch (err) {
         console.error(err);
-        document.getElementById('status').textContent = "Failed to start verification.";
+        status.textContent = "Failed to start verification.";
       }
     }
 
-    // Step 4 — Verify icon
+    // 3️⃣ Verify the icon
     async function verify() {
       const tag = document.getElementById('tag').value.replace('#','').trim();
+      const status = document.getElementById('status');
 
-      if (!requiredIcon) {
+      if (!requiredIcon || !tag) {
         alert("Start verification first.");
         return;
       }
@@ -101,7 +106,7 @@
         const data = await res.json();
 
         if (data.error) {
-          alert(data.error);
+          status.textContent = data.error;
         } else {
           alert("✅ Account verified!");
           window.location.href = '/leaderboards.html'; // redirect after success
@@ -109,7 +114,7 @@
 
       } catch (err) {
         console.error(err);
-        alert("Failed to verify account. Try again.");
+        status.textContent = "Failed to verify account. Try again.";
       }
     }
   </script>
