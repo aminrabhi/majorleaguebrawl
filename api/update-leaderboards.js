@@ -8,7 +8,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Resolve path to your JSON file
   const filePath = path.join(process.cwd(), 'verifiedUsers.json');
 
   let users;
@@ -16,29 +15,33 @@ export default async function handler(req, res) {
     const rawData = fs.readFileSync(filePath, 'utf-8');
     users = JSON.parse(rawData);
   } catch (err) {
-    console.error('Failed to read or parse verifiedUsers.json:', err);
-    return res.status(500).json({ error: 'Server error reading verifiedUsers.json' });
+    console.error('Error reading verifiedUsers.json:', err);
+    return res.status(500).json({ error: 'Failed to read verifiedUsers.json' });
   }
 
   const majorLeaderboard = [];
   const minorLeaderboard = [];
 
-  for (let user of users) {
+  for (const user of users) {
     try {
+      if (!API_KEY) {
+        console.error('Brawl Stars API key is missing');
+        continue;
+      }
+
       const response = await fetch(
         `https://bsproxy.royaleapi.dev/v1/players/${encodeURIComponent(user.tag)}`,
         { headers: { Authorization: `Bearer ${API_KEY}` } }
       );
 
       if (!response.ok) {
-        console.error(`Failed to fetch ${user.tag}: Status ${response.status}`);
+        console.error(`Failed to fetch ${user.tag}: ${response.status}`);
         continue;
       }
 
       const playerData = await response.json();
 
-      // Find the user's selected brawler
-      const selectedBrawler = playerData.brawlers.find(
+      const selectedBrawler = playerData.brawlers?.find(
         b => b.name.toLowerCase() === user.brawler.toLowerCase()
       );
 
@@ -51,21 +54,20 @@ export default async function handler(req, res) {
         tag: user.tag,
         name: playerData.name,
         brawler: user.brawler,
-        trophies: selectedBrawler.trophies
+        trophies: selectedBrawler.trophies || 0
       };
 
       if (user.league === 'major') majorLeaderboard.push(entry);
       else if (user.league === 'minor') minorLeaderboard.push(entry);
 
     } catch (err) {
-      console.error(`Error fetching data for ${user.tag}:`, err);
+      console.error(`Error fetching ${user.tag}:`, err);
     }
   }
 
-  // Sort each leaderboard by trophies descending
-  majorLeaderboard.sort((a, b) => b.trophies - a.trophies);
-  minorLeaderboard.sort((a, b) => b.trophies - a.trophies);
-
-  // Return JSON safely
-  res.status(200).json({ majorLeaderboard, minorLeaderboard });
+  // Always return valid JSON
+  res.status(200).json({
+    majorLeaderboard,
+    minorLeaderboard
+  });
 }
