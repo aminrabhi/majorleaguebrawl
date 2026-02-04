@@ -1,17 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Major League Brawl</title>
+    <title>Major League Brawl</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
 </head>
 <body>
-
+<ul>
+  <img style="float: left; padding: 14px 16px;" src="images/MLB_Logo.png" alt="logo" height="32">
+  <li><a href="index.html">Home</a></li>
+  <li><a href="new.html">News</a></li>
+  <li><a href="about.html">About</a></li>
+  <li><a href="major.html">Leaderboards</a></li>
+  <li><a href="faq.html">FAQ</a></li>  
+  <li style="float: right;"><a href="register.html">Register</a></li>
+</ul>
 <h1>Major League Brawl</h1>
 <p>Legendary → Pro</p>
 
 <button onclick="updateMajor()">Update</button>
 <ul id="leaderboard"></ul>
 
+<footer>
+  <p>This material is unofficial and is not endorsed by Supercell. For more information see Supercell's Fan Content Policy: www.supercell.com/fan-content-policy</p>
+</footer>
 <script>
 async function updateMajor() {
   const res = await fetch('/api/update-leaderboards', { method: 'POST' });
@@ -29,6 +43,62 @@ async function updateMajor() {
 
 updateMajor();
 </script>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h2, p {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 20px 21px;
+  text-decoration: none;
+  font-family: "Lilita One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333333;
+}
+
+ul li {
+  float: left;
+}
+
+
+
+ul li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 20px 21px;
+  text-decoration: none;
+  font-family: "Lilita One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+ul li a:hover {
+  background-color: #111111;
+}
+
+footer {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333333;
+}
+
+</style>
 
 </body>
 </html>
