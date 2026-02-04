@@ -4,28 +4,31 @@ import path from 'path';
 const API_KEY = process.env.BRAWLSTARS_KEY;
 
 export default async function handler(req, res) {
+  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Path to verified users
   const filePath = path.join(process.cwd(), 'verifiedUsers.json');
 
   let users;
   try {
-    const rawData = fs.readFileSync(filePath, 'utf-8');
-    users = JSON.parse(rawData);
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    users = JSON.parse(raw);
   } catch (err) {
     console.error('Error reading verifiedUsers.json:', err);
     return res.status(500).json({ error: 'Failed to read verifiedUsers.json' });
   }
 
+  // Prepare leaderboards
   const majorLeaderboard = [];
   const minorLeaderboard = [];
 
   for (const user of users) {
     try {
       if (!API_KEY) {
-        console.error('Brawl Stars API key is missing');
+        console.error('Brawl Stars API key missing');
         continue;
       }
 
@@ -52,7 +55,7 @@ export default async function handler(req, res) {
 
       const entry = {
         tag: user.tag,
-        name: playerData.name,
+        name: playerData.name || user.name,
         brawler: user.brawler,
         trophies: selectedBrawler.trophies || 0
       };
@@ -61,13 +64,14 @@ export default async function handler(req, res) {
       else if (user.league === 'minor') minorLeaderboard.push(entry);
 
     } catch (err) {
-      console.error(`Error fetching ${user.tag}:`, err);
+      console.error(`Error fetching data for ${user.tag}:`, err);
     }
   }
 
+  // Sort by trophies descending
+  majorLeaderboard.sort((a, b) => b.trophies - a.trophies);
+  minorLeaderboard.sort((a, b) => b.trophies - a.trophies);
+
   // Always return valid JSON
-  res.status(200).json({
-    majorLeaderboard,
-    minorLeaderboard
-  });
+  return res.status(200).json({ majorLeaderboard, minorLeaderboard });
 }
