@@ -17,27 +17,42 @@
 
 <script>
 async function updateLeaderboards() {
-  const res = await fetch('/api/update-leaderboards', { method: 'POST' });
-  const data = await res.json();
+  try {
+    const res = await fetch(`${window.location.origin}/api/update-leaderboards`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
 
-  const majorUl = document.getElementById('majorLeaderboard');
-  majorUl.innerHTML = '';
-  data.majorLeaderboard.forEach(p => {
-    const li = document.createElement('li');
-    li.textContent = `${p.name} (${p.brawler}) — ${p.trophies} trophies`;
-    majorUl.appendChild(li);
-  });
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('Server returned error:', res.status, text);
+      return;
+    }
 
-  const minorUl = document.getElementById('minorLeaderboard');
-  minorUl.innerHTML = '';
-  data.minorLeaderboard.forEach(p => {
-    const li = document.createElement('li');
-    li.textContent = `${p.name} (${p.brawler}) — ${p.trophies} trophies`;
-    minorUl.appendChild(li);
-  });
+    const data = await res.json();
+
+    const majorUl = document.getElementById('majorLeaderboard');
+    majorUl.innerHTML = '';
+    (data.majorLeaderboard || []).forEach(p => {
+      const li = document.createElement('li');
+      li.textContent = `${p.name} (${p.brawler}) — ${p.trophies} trophies`;
+      majorUl.appendChild(li);
+    });
+
+    const minorUl = document.getElementById('minorLeaderboard');
+    minorUl.innerHTML = '';
+    (data.minorLeaderboard || []).forEach(p => {
+      const li = document.createElement('li');
+      li.textContent = `${p.name} (${p.brawler}) — ${p.trophies} trophies`;
+      minorUl.appendChild(li);
+    });
+
+  } catch (err) {
+    console.error('Fetch failed:', err);
+  }
 }
 
-// Auto-update on page load
 updateLeaderboards();
 </script>
 
