@@ -34,11 +34,12 @@ async function updateMajor() {
   const ul = document.getElementById('leaderboard');
   ul.innerHTML = '';
 
-  data.majorLeaderboard.forEach((p, i) => 
-    const li = document.createElement('li');
-    li.textContent = `#${i + 1} ${p.name} (${p.brawler}) — ${p.trophies}`;
-    ul.appendChild(li);
-  );
+data.majorLeaderboard.forEach((p, i) => {
+  const li = document.createElement('li');
+  li.textContent = `#${i + 1} ${p.name} (${p.brawler}) — ${p.trophies}`;
+  ul.appendChild(li);
+});
+
 }
 
 updateMajor();
