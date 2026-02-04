@@ -44,9 +44,19 @@ export default async function handler(req, res) {
 
       const playerData = await response.json();
 
-      const selectedBrawler = playerData.brawlers?.find(
-        b => b.name.toLowerCase() === user.brawler.toLowerCase()
-      );
+      const selectedBrawler = playerData.brawlers.find(
+  b => b.name.toLowerCase() === user.brawler.toLowerCase()
+);
+
+if (!selectedBrawler) continue;
+
+const entry = {
+  tag: user.tag,
+  name: playerData.name,
+  brawler: user.brawler,
+  brawlerId: selectedBrawler.id,   // ✅ THIS IS THE KEY
+  trophies: selectedBrawler.trophies
+};
 
       if (!selectedBrawler) {
         console.error(`Brawler ${user.brawler} not found for ${user.tag}`);
