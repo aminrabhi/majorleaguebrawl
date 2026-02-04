@@ -34,11 +34,19 @@ async function updateMajor() {
   const ul = document.getElementById('leaderboard');
   ul.innerHTML = '';
 
-  data.majorLeaderboard.forEach((p, i) => {
-    const li = document.createElement('li');
-    li.textContent = `#${i + 1} ${p.name} (${p.brawler}) — ${p.trophies}`;
+const li = document.createElement('li');
+li.className = 'player';
+
+li.innerHTML = `
+  <span>
+    <span class="rank">#${i + 1}</span>
+    <span class="name">${p.name}</span>
+    <span class="brawler">(${p.brawler})</span>
+  </span>
+  <span class="trophies">${p.trophies}</span>
+`;
     ul.appendChild(li);
-  });
+  ;
 }
 
 updateMajor();
