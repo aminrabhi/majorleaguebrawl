@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Major League Brawl Leaderboard</title>
+  <title>Major League Brawl Leaderboards</title>
 </head>
 <body>
 <h1>Major League Brawl Leaderboards</h1>
@@ -26,7 +26,8 @@ async function updateLeaderboards() {
 
     if (!res.ok) {
       const text = await res.text();
-      console.error('Server returned error:', res.status, text);
+      console.error('Server error:', res.status, text);
+      alert('Server error. Check console.');
       return;
     }
 
@@ -50,11 +51,12 @@ async function updateLeaderboards() {
 
   } catch (err) {
     console.error('Fetch failed:', err);
+    alert('Fetch failed. Check console.');
   }
 }
 
+// Auto-update on page load
 updateLeaderboards();
 </script>
-
 </body>
 </html>
