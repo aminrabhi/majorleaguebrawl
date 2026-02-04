@@ -126,40 +126,47 @@ footer {
   background-color: #333333;
 }
 
-/* PAGE BACKGROUND */
 body {
-  background: #0b1d3a;
-  color: white;
+  margin: 0;
   font-family: "Lilita One", sans-serif;
-}
 
-/* LEADERBOARD CONTAINER */
+  background-image: url("images/red_bg.png"); /* your image */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  color: white;
+} 
+
 #leaderboard {
-  max-width: 900px;
-  margin: 30px auto;
+  list-style: none;
   padding: 0;
+  margin: 30px auto;
+  max-width: 900px;
+  background: transparent;
 }
 
-/* PLAYER CARD */
-.player-card {
-  background: #0f2a52;
-  border-radius: 14px;
-  padding: 14px 18px;
-  margin-bottom: 12px;
 
+.player-card {
   display: flex;
   align-items: center;
+  gap: 16px;
+
+  background: rgba(15, 42, 82, 0.95);
+  border-radius: 18px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
 }
 
-/* RANK COLUMN */
+/* Rank number */
 .player-card .rank {
-  width: 50px;
+  width: 40px;
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
   color: #7fb7ff;
 }
 
-/* LEFT SIDE */
+/* Left section */
 .player-card .left {
   display: flex;
   align-items: center;
@@ -168,14 +175,14 @@ body {
 }
 
 .brawler-icon {
-  height: 48px;
+  height: 50px;
 }
 
 .name {
   font-size: 22px;
 }
 
-/* RIGHT SIDE */
+/* Right section */
 .player-card .right {
   display: flex;
   align-items: center;
