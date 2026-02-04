@@ -17,9 +17,15 @@
   <li><a href="faq.html">FAQ</a></li>  
   <li style="float: right;"><a href="register.html">Register</a></li>
 </ul>
-<h1>Major League Brawl</h1>
-<p>Legendary → Pro</p>
+<div class="league-header">
+  <h1>Major League</h1>
 
+  <div class="league-range">
+    <img src="https://cdn.brawlify.com/icon/legendary.png" alt="Legendary">
+    <span>→</span>
+    <img src="https://cdn.brawlify.com/icon/pro.png" alt="Pro">
+  </div>
+</div>
 <button onclick="updateMajor()">Update</button>
 <ul id="leaderboard"></ul>
 
@@ -34,15 +40,34 @@ async function updateMajor() {
   const ul = document.getElementById('leaderboard');
   ul.innerHTML = '';
 
-data.majorLeaderboard.forEach((p, i) => {
-  const li = document.createElement('li');
-  li.textContent = `#${i + 1} ${p.name} (${p.brawler}) — ${p.trophies}`;
-  ul.appendChild(li);
-});
+  data.majorLeaderboard.forEach((p, i) => {
+    const li = document.createElement('li');
+    li.className = 'player-card';
 
+    li.innerHTML = `
+      <div class="left">
+        <img class="brawler-icon"
+          src="https://cdn.brawlify.com/brawler/${p.brawler.toLowerCase().replace(' ', '-')}.png"
+          alt="${p.brawler}">
+        <div class="player-info">
+          <span class="rank">#${i + 1}</span>
+          <span class="name">${p.name}</span>
+        </div>
+      </div>
+
+      <div class="right">
+        <img class="trophy-icon"
+          src="https://cdn.brawlify.com/icon/trophy.png" alt="Trophy">
+        <span class="trophies">${p.trophies}</span>
+      </div>
+    `;
+
+    ul.appendChild(li);
+  });
 }
 
 updateMajor();
+
 </script>
 
 <style>
@@ -97,6 +122,95 @@ footer {
   padding: 0;
   overflow: hidden;
   background-color: #333333;
+}
+
+    body {
+  background: #0b1d3a;
+  color: white;
+  font-family: "Lilita One", sans-serif;
+}
+
+/* League header */
+.league-header {
+  text-align: center;
+  padding: 40px 0 20px;
+}
+
+.league-header h1 {
+  font-size: 48px;
+  margin: 0;
+}
+
+.league-range {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.league-range img {
+  height: 40px;
+}
+
+/* Leaderboard list */
+#leaderboard {
+  max-width: 800px;
+  margin: 20px auto 60px;
+  padding: 0;
+}
+
+/* Player card */
+.player-card {
+  background: #0f2a52;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Left side */
+.player-card .left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brawler-icon {
+  height: 48px;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.rank {
+  color: #7fb7ff;
+  font-size: 14px;
+}
+
+.name {
+  font-size: 20px;
+}
+
+/* Right side */
+.player-card .right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trophy-icon {
+  height: 24px;
+}
+
+.trophies {
+  font-size: 20px;
+  color: #ffd84d;
 }
 
 </style>
