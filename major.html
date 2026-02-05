@@ -27,6 +27,7 @@
   </div>
 </div>
 <button onclick="updateMajor()">Update</button>
+<div id="podium"></div>
 <ul id="leaderboard"></ul>
 
 <footer>
@@ -37,33 +38,43 @@ async function updateMajor() {
   const res = await fetch('/api/update-leaderboards', { method: 'POST' });
   const data = await res.json();
 
+  const podium = document.getElementById('podium');
   const ul = document.getElementById('leaderboard');
+
+  podium.innerHTML = '';
   ul.innerHTML = '';
 
   data.majorLeaderboard.forEach((p, i) => {
-    const li = document.createElement('li');
-    li.className = 'player-card';
+    const card = document.createElement('div');
+    card.classList.add('player-card');
 
+    // podium placement
+    if (i === 0) card.classList.add('gold');
+    if (i === 1) card.classList.add('silver');
+    if (i === 2) card.classList.add('bronze');
 
-    const emojiUrl = BRAWLER_EMOJI[p.brawler];
-
-    li.innerHTML = `
-      <span class="rank">#${i + 1}</span>
-
-      <span class="name">
-        ${emojiUrl ? `<img class="brawler-emoji" src="${emojiUrl}" alt="${p.brawler}">` : ''}
-        ${p.name}
-      </span>
+    card.innerHTML = `
+      <div class="left">
+        <span class="rank">#${i + 1}</span>
+        <span class="name">${p.name}</span>
+      </div>
 
       <div class="right">
-        <img class="trophy-icon" src="images/trophy.png" alt="Trophy">
+        <img class="trophy-icon" src="images/trophy.png">
         <span class="trophies">${p.trophies}</span>
       </div>
     `;
 
-    ul.appendChild(li);
+    if (i < 3) {
+      podium.appendChild(card);   // TOP 3
+    } else {
+      const li = document.createElement('li');
+      li.appendChild(card);
+      ul.appendChild(li);         // REST
+    }
   });
 }
+
 
 const BRAWLER_EMOJI = {
   "Shelly": "https://cdn.brawlify.com/brawlers/emoji/16000000.png",
@@ -217,6 +228,39 @@ body {
   vertical-align: middle;
   margin-right: 6px;
 }
+
+#podium {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.gold {
+  background: linear-gradient(135deg, #ffd700, #ffb700);
+  color: #000;
+  transform: scale(1.1);
+}
+
+.silver {
+  background: linear-gradient(135deg, #d9d9d9, #bfbfbf);
+  color: #000;
+}
+
+.bronze {
+  background: linear-gradient(135deg, #cd7f32, #b87333);
+  color: #000;
+}
+
+#leaderboard li {
+  list-style: none;
+  margin-bottom: 12px;
+}
+
+
+.gold { box-shadow: 0 0 20px rgba(255,215,0,0.6); }
+.silver { box-shadow: 0 0 16px rgba(200,200,200,0.5); }
+.bronze { box-shadow: 0 0 14px rgba(205,127,50,0.5); }
 
 </style>
 
