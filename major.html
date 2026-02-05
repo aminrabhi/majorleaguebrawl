@@ -44,20 +44,19 @@ async function updateMajor() {
     const li = document.createElement('li');
     li.className = 'player-card';
 
-    const brawlerSlug = p.brawler.toLowerCase().replace(/\s+/g, '-');
 
-      li.innerHTML = `
-    <span class="rank">#${i + 1}</span>
+    const emojiUrl = BRAWLER_EMOJI[p.brawler];
 
-    <span class="name">
-      ${emojiUrl ? `<img class="brawler-emoji" src="${emojiUrl}">` : ''}
-      ${p.name}
-    </span>`;
+    li.innerHTML = `
+      <span class="rank">#${i + 1}</span>
+
+      <span class="name">
+        ${emojiUrl ? `<img class="brawler-emoji" src="${emojiUrl}" alt="${p.brawler}">` : ''}
+        ${p.name}
+      </span>
 
       <div class="right">
-        <img class="trophy-icon"
-          src="images/trophy.png"
-          alt="Trophy">
+        <img class="trophy-icon" src="images/trophy.png" alt="Trophy">
         <span class="trophies">${p.trophies}</span>
       </div>
     `;
@@ -65,6 +64,7 @@ async function updateMajor() {
     ul.appendChild(li);
   });
 }
+
 const BRAWLER_EMOJI = {
   "Shelly": "https://cdn.brawlify.com/brawlers/emoji/16000000.png",
   "Colt": "https://cdn.brawlify.com/brawlers/emoji/16000001.png",
