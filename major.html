@@ -34,60 +34,92 @@
   <p>This material is unofficial and is not endorsed by Supercell. For more information see Supercell's Fan Content Policy: www.supercell.com/fan-content-policy</p>
 </footer>
 <script>
+/* ---------------------------
+   BRAWLER → EMOJI ID MAP
+---------------------------- */
+const BRAWLER_EMOJI_IDS = {
+  shelly: "16000000",
+  colt: "16000001",
+  bull: "16000002",
+  brock: "16000003",
+  nita: "16000005",
+  elprimo: "16000004",
+  barley: "16000006",
+  poco: "16000007",
+  rosa: "16000008"
+  // add more as needed
+};
+
+/* ---------------------------
+   UPDATE MAJOR LEADERBOARD
+---------------------------- */
 async function updateMajor() {
-  const res = await fetch('/api/update-leaderboards', { method: 'POST' });
-  const data = await res.json();
+  try {
+    const res = await fetch("/api/update-leaderboards", { method: "POST" });
+    if (!res.ok) throw new Error("Failed to fetch leaderboard");
 
-  const podium = document.getElementById('podium');
-  const ul = document.getElementById('leaderboard');
+    const data = await res.json();
 
-  podium.innerHTML = '';
-  ul.innerHTML = '';
+    const podium = document.getElementById("podium");
+    const ul = document.getElementById("leaderboard");
 
-  data.majorLeaderboard.forEach((p, i) => {
-    const card = document.createElement('div');
-    card.classList.add('player-card');
+    podium.innerHTML = "";
+    ul.innerHTML = "";
 
+    data.majorLeaderboard.forEach((p, i) => {
+      const card = document.createElement("div");
+      card.classList.add("player-card");
 
-    if (i === 1) card.classList.add('silver');
-    if (i === 0) card.classList.add('gold');
-    if (i === 2) card.classList.add('bronze');
+      // Podium colors
+      if (i === 0) card.classList.add("gold");
+      if (i === 1) card.classList.add("silver");
+      if (i === 2) card.classList.add("bronze");
 
-    card.innerHTML = `
-      <div class="left">
-        <span class="rank">#${i + 1}</span>
-        <span class="name">${p.name}</span>
-      </div>
+      // Build emoji URL
+      const key = p.brawler.toLowerCase().replace(/\s+/g, "");
+      const emojiId = BRAWLER_EMOJI_IDS[key];
+      const emojiUrl = emojiId
+        ? `https://cdn.brawlify.com/brawlers/emoji/${emojiId}.png`
+        : null;
 
-      <div class="right">
-        <img class="trophy-icon" src="images/trophy.png">
-        <span class="trophies">${p.trophies}</span>
-      </div>
-    `;
+      card.innerHTML = `
+        <div class="left">
+          <span class="rank">#${i + 1}</span>
 
-    if (i < 3) {
-      podium.appendChild(card);   // TOP 3
-    } else {
-      const li = document.createElement('li');
-      li.appendChild(card);
-      ul.appendChild(li);         // REST
-    }
-  });
+          <span class="name">
+            ${emojiUrl ? `<img class="brawler-emoji" src="${emojiUrl}" alt="${p.brawler}">` : ""}
+            <span class="player-name">${p.name}</span>
+          </span>
+        </div>
+
+        <div class="right">
+          <img class="trophy-icon" src="images/trophy.png" alt="Trophy">
+          <span class="trophies">${p.trophies}</span>
+        </div>
+      `;
+
+      // Top 3 → podium
+      if (i < 3) {
+        podium.appendChild(card);
+      }
+      // Rest → normal list
+      else {
+        const li = document.createElement("li");
+        li.appendChild(card);
+        ul.appendChild(li);
+      }
+    });
+
+  } catch (err) {
+    console.error("Leaderboard update failed:", err);
+  }
 }
 
-
-const BRAWLER_EMOJI = {
-  "Shelly": "https://cdn.brawlify.com/brawlers/emoji/16000000.png",
-  "Colt": "https://cdn.brawlify.com/brawlers/emoji/16000001.png",
-  "Bull": "https://cdn.brawlify.com/brawlers/emoji/16000002.png",
-  "Jessie": "https://cdn.brawlify.com/brawlers/emoji/16000003.png",
-  "Brock": "https://cdn.brawlify.com/brawlers/emoji/16000004.png",
-  "Dynamike": "https://cdn.brawlify.com/brawlers/emoji/16000005.png",
-  "Bo": "https://cdn.brawlify.com/brawlers/emoji/16000006.png",
-  "Tick": "https://cdn.brawlify.com/brawlers/emoji/16000007.png"
-
-};
+/* ---------------------------
+   AUTO LOAD
+---------------------------- */
 updateMajor();
+
 </script>
 
 
@@ -224,10 +256,11 @@ body {
 }
 
 .brawler-emoji {
-  height: 22px;
-  vertical-align: middle;
-  margin-right: 6px;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
 }
+
 
 #podium {
   display: flex;
