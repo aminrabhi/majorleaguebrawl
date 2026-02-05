@@ -21,9 +21,9 @@
   <h1>Major League</h1>
 
   <div class="league-range">
-    <img style="height: 24px;" src="images/legendary.png" alt="Legendary">
+    <img style="height: 64px;" src="images/legendary.png" alt="Legendary">
     <span>→</span>
-    <img style="height: 24px;" src="images/pro.png" alt="Pro">
+    <img style="height: 64px;" src="images/pro.png" alt="Pro">
   </div>
 </div>
 <button onclick="updateMajor()">Update</button>
@@ -46,15 +46,13 @@ async function updateMajor() {
 
     const brawlerSlug = p.brawler.toLowerCase().replace(/\s+/g, '-');
 
-    li.innerHTML = `
-      <div class="rank">#${i + 1}</div>
+      li.innerHTML = `
+    <span class="rank">#${i + 1}</span>
 
-      <div class="left">
-        <img class="brawler-icon"
-          src="https://cdn.brawlify.com/brawler/${brawlerSlug}/model.png"
-          alt="${p.brawler}">
-        <span class="name">${p.name}</span>
-      </div>
+    <span class="name">
+      ${emojiUrl ? `<img class="brawler-emoji" src="${emojiUrl}">` : ''}
+      ${p.name}
+    </span>
 
       <div class="right">
         <img class="trophy-icon"
@@ -67,7 +65,17 @@ async function updateMajor() {
     ul.appendChild(li);
   });
 }
-
+const BRAWLER_EMOJI = {
+  "Shelly": "https://cdn.brawlify.com/brawlers/emoji/16000000.png",
+  "Colt": "https://cdn.brawlify.com/brawlers/emoji/16000001.png",
+  "Bull": "https://cdn.brawlify.com/brawlers/emoji/16000002.png",
+  "Jessie": "https://cdn.brawlify.com/brawlers/emoji/16000003.png",
+  "Brock": "https://cdn.brawlify.com/brawlers/emoji/16000004.png",
+  "Dynamike": "https://cdn.brawlify.com/brawlers/emoji/16000005.png",
+  "Bo": "https://cdn.brawlify.com/brawlers/emoji/16000006.png",
+  "Tick": "https://cdn.brawlify.com/brawlers/emoji/16000007.png"
+  // add more as you need
+};
 updateMajor();
 </script>
 
@@ -202,6 +210,13 @@ body {
     align-items: center;
     text-align: center;
 }
+
+.brawler-emoji {
+  height: 22px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
 </style>
 
 </body>
