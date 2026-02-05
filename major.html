@@ -48,9 +48,9 @@ async function updateMajor() {
     const card = document.createElement('div');
     card.classList.add('player-card');
 
-    // podium placement
-    if (i === 0) card.classList.add('gold');
+
     if (i === 1) card.classList.add('silver');
+    if (i === 0) card.classList.add('gold');
     if (i === 2) card.classList.add('bronze');
 
     card.innerHTML = `
@@ -238,18 +238,18 @@ body {
 
 .gold {
   background: linear-gradient(135deg, #ffd700, #ffb700);
-  color: #000;
+  color: white;
   transform: scale(1.1);
 }
 
 .silver {
   background: linear-gradient(135deg, #d9d9d9, #bfbfbf);
-  color: #000;
+  color: white;
 }
 
 .bronze {
   background: linear-gradient(135deg, #cd7f32, #b87333);
-  color: #000;
+  color: white;
 }
 
 #leaderboard li {
