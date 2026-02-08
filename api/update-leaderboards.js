@@ -4,12 +4,12 @@ import path from 'path';
 const API_KEY = process.env.BRAWLSTARS_KEY;
 
 export default async function handler(req, res) {
-  // Only allow POST requests
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Path to verified users
+
   const filePath = path.join(process.cwd(), 'verifiedUsers.json');
 
   let users;
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Failed to read verifiedUsers.json' });
   }
 
-  // Prepare leaderboards
+ 
   const majorLeaderboard = [];
   const minorLeaderboard = [];
 
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // Sort by trophies descending
+
   majorLeaderboard.sort((a, b) => b.trophies - a.trophies);
   minorLeaderboard.sort((a, b) => b.trophies - a.trophies);
 
