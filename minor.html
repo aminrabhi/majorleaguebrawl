@@ -16,7 +16,7 @@
   <li><a href="about.html">About</a></li>
   <li><a href="major.html">Leaderboards</a></li>
   <li><a href="faq.html">FAQ</a></li>  
-  <li style="float: right; background-color: #0e1d32;"><a href="minor.html">Switch to Minor League</a></li>
+  <li style="float: right; background-color: #bf0e3e;"><a href="minor.html">Switch to Major League</a></li>
   <li style="float: right;"><a href="register.html">Register</a></li>
 </ul>
 <div class="league-header">
@@ -24,9 +24,9 @@
   <h1 class="subtitle">Leaderboard</h1>
   <h1 class="season"><i>Season: 47 "Brawlintine's"</i></i></i></h1>
   <div class="league-range">
-    <img style="height: 32px; vertical-align: middle;" src="images/legendary.png" alt="Legendary">
+    <img style="height: 32px; vertical-align: middle;" src="images/bronze.png" alt="Bronze">
     <span>to</span>
-    <img style="height: 32px; vertical-align: middle;" src="images/pro.png" alt="Pro">
+    <img style="height: 32px; vertical-align: middle;" src="images/mythic.png" alt="Mythic">
   </div>
 </div>
 
@@ -148,9 +148,7 @@ glowbert: "16000101",
 /* ---------------------------
    UPDATE MINOR LEADERBOARD
 ---------------------------- */
-/* ---------------------------
-   UPDATE MINOR LEAGUE LEADERBOARD
----------------------------- */
+
 async function updateMinor() {
   try {
     const res = await fetch("/api/update-leaderboards", { method: "POST" });
