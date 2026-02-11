@@ -28,9 +28,9 @@
     <img style="height: 32px; vertical-align: middle;" src="images/pro.png" alt="Pro">
   </div>
 </div>
-<button onclick="updateMajor()">Update</button>
-<div id="podium"></div>
-<ul id="leaderboard"></ul>
+
+<div id="minor-podium"></div>
+<ul id="minor-leaderboard"></ul>
 
 <p style="margin: 5px;">This might take a while to load.</p>
 <footer>
@@ -147,20 +147,23 @@ glowbert: "16000101",
 /* ---------------------------
    UPDATE MINOR LEADERBOARD
 ---------------------------- */
-async function updateMinor() {
+async function updateLeague(league) {
   try {
     const res = await fetch("/api/update-leaderboards", { method: "POST" });
     if (!res.ok) throw new Error("Failed to fetch leaderboard");
 
     const data = await res.json();
 
-    const podium = document.getElementById("podium");
-    const ul = document.getElementById("leaderboard");
+    const podium = document.getElementById(`${league}-podium`);
+    const ul = document.getElementById(`${league}-leaderboard`);
 
     podium.innerHTML = "";
     ul.innerHTML = "";
 
-    data.majorLeaderboard.forEach((p, i) => {
+    const leaderboard =
+      league === "major" ? data.majorLeaderboard : data.minorLeaderboard;
+
+    leaderboard.forEach((p, i) => {
       const card = document.createElement("div");
       card.classList.add("player-card");
 
@@ -169,7 +172,7 @@ async function updateMinor() {
       if (i === 1) card.classList.add("silver");
       if (i === 2) card.classList.add("bronze");
 
-      // Build emoji URL
+      // Emoji URL
       const key = p.brawler.toLowerCase().replace(/\s+/g, "");
       const emojiId = BRAWLER_EMOJI_IDS[key];
       const emojiUrl = emojiId
@@ -179,7 +182,6 @@ async function updateMinor() {
       card.innerHTML = `
         <div class="left">
           <span class="rank">#${i + 1}</span>
-
           <span class="name">
             ${emojiUrl ? `<img class="brawler-emoji" src="${emojiUrl}" alt="${p.brawler}">` : ""}
             <span class="player-name">${p.name}</span>
@@ -192,12 +194,9 @@ async function updateMinor() {
         </div>
       `;
 
-      // Top 3 → podium
       if (i < 3) {
         podium.appendChild(card);
-      }
-      // Rest → normal list
-      else {
+      } else {
         const li = document.createElement("li");
         li.appendChild(card);
         ul.appendChild(li);
@@ -205,14 +204,10 @@ async function updateMinor() {
     });
 
   } catch (err) {
-    console.error("Leaderboard update failed:", err);
+    console.error(`Failed to update ${league} leaderboard:`, err);
   }
 }
 
-/* ---------------------------
-   AUTO LOAD
----------------------------- */
-updateMinor();
 
 </script>
 
