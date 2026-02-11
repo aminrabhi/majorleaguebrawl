@@ -147,23 +147,23 @@ glowbert: "16000101",
 /* ---------------------------
    UPDATE MINOR LEADERBOARD
 ---------------------------- */
-async function updateLeague(league) {
+/* ---------------------------
+   UPDATE MINOR LEAGUE LEADERBOARD
+---------------------------- */
+async function updateMinor() {
   try {
     const res = await fetch("/api/update-leaderboards", { method: "POST" });
     if (!res.ok) throw new Error("Failed to fetch leaderboard");
 
     const data = await res.json();
 
-    const podium = document.getElementById(`${league}-podium`);
-    const ul = document.getElementById(`${league}-leaderboard`);
+    const podium = document.getElementById("podium");       // minor podium container
+    const ul = document.getElementById("leaderboard");     // minor leaderboard list
 
     podium.innerHTML = "";
     ul.innerHTML = "";
 
-    const leaderboard =
-      league === "major" ? data.majorLeaderboard : data.minorLeaderboard;
-
-    leaderboard.forEach((p, i) => {
+    data.minorLeaderboard.forEach((p, i) => {
       const card = document.createElement("div");
       card.classList.add("player-card");
 
@@ -172,7 +172,7 @@ async function updateLeague(league) {
       if (i === 1) card.classList.add("silver");
       if (i === 2) card.classList.add("bronze");
 
-      // Emoji URL
+      // Build emoji URL
       const key = p.brawler.toLowerCase().replace(/\s+/g, "");
       const emojiId = BRAWLER_EMOJI_IDS[key];
       const emojiUrl = emojiId
@@ -182,6 +182,7 @@ async function updateLeague(league) {
       card.innerHTML = `
         <div class="left">
           <span class="rank">#${i + 1}</span>
+
           <span class="name">
             ${emojiUrl ? `<img class="brawler-emoji" src="${emojiUrl}" alt="${p.brawler}">` : ""}
             <span class="player-name">${p.name}</span>
@@ -194,9 +195,12 @@ async function updateLeague(league) {
         </div>
       `;
 
+      // Top 3 → podium
       if (i < 3) {
         podium.appendChild(card);
-      } else {
+      } 
+      // Rest → normal list
+      else {
         const li = document.createElement("li");
         li.appendChild(card);
         ul.appendChild(li);
@@ -204,10 +208,14 @@ async function updateLeague(league) {
     });
 
   } catch (err) {
-    console.error(`Failed to update ${league} leaderboard:`, err);
+    console.error("Minor league update failed:", err);
   }
 }
 
+/* ---------------------------
+   AUTO LOAD
+---------------------------- */
+updateMinor();
 
 </script>
 
