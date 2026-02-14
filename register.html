@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - Major League Brawl</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; background: #1b1b2f; color: white; }
+    input, button { display: block; margin: 10px 0; padding: 10px; width: 300px; }
+    button { cursor: pointer; background: #4a4ae3; color: white; border: none; border-radius: 5px; }
+    p { margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Register to Major League Brawl</h2>
+
+<input id="email" type="email" placeholder="Email" />
+<input id="password" type="password" placeholder="Password" />
+<input id="name" placeholder="Full Name" />
+<input id="discord" placeholder="Discord Username" />
+<input id="brawlTag" placeholder="Brawl Stars ID (e.g., #ABC123)" />
+<input id="brawler" placeholder="Brawler you will compete with" />
+<button onclick="register()">Sign Up</button>
+
+<p id="msg"></p>
+
+<script>
+  // Initialize Supabase
+  const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_1ahZ2_o-BRI5QuVK-L_OCA_04MBoChB";
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function register() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const name = document.getElementById("name").value;
+    const discord = document.getElementById("discord").value;
+    const brawlTag = document.getElementById("brawlTag").value;
+    const brawler = document.getElementById("brawler").value;
+
+    // 1️⃣ Sign up user
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password
+    });
+
+    if (authError) {
+      document.getElementById("msg").textContent = authError.message;
+      return;
+    }
+
+    // 2️⃣ Save extra info to players table
+    const user_id = authData.user.id;
+    const { data, error: dbError } = await supabase.from("players").insert([
+      {
+        user_id,
+        name,
+        discord_username: discord,
+        brawl_tag: brawlTag,
+        brawler
+      }
+    ]);
+
+    if (dbError) {
+      document.getElementById("msg").textContent = dbError.message;
+      return;
+    }
+
+    document.getElementById("msg").textContent =
+      "Account created! Check your email to verify your account.";
+  }
+</script>
+
+</body>
+</html>
